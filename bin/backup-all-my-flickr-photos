@@ -183,12 +183,19 @@ def download_file(photo, filename):
 
 
 def preferred_size(photo):
-    sizes = photo.getSizes()
-    if 'Video Original' in sizes:
-        return 'Video Original'
-    elif 'Original' in sizes:
-        return 'Original'
-    raise(Exception("Could not find size 'Video Original' or 'Original' for photo %s" % (photo,)))
+    try:
+        sizes = photo.getSizes()
+        if 'Video Original' in sizes:
+            return 'Video Original'
+        elif 'Original' in sizes:
+            return 'Original'
+        elif 'Medium' in sizes:
+            return 'Medium'
+    except Exception as e:
+        print (repr(e), sizes)
+        return 'Medium'
+    # raise(Exception("Could not find size 'Video Original' or 'Original' for photo %s" % (photo,)))
+
 
 
 def guess_extension(url, headers):
@@ -204,7 +211,8 @@ def guess_extension(url, headers):
                 return extension
     # It's tempting to look at the Content-Type header here, but in the real
     # world, Flickr sets the wrong value for .mov files. So give up instead.
-    raise(Exception("Cannot guess extension for URL %s" % (url,)))
+    # raise(Exception("Cannot guess extension for URL %s" % (url,)))
+    return 'unknown'
 
 
 def clean_stale_files(files_in_flickr, download_dir):
